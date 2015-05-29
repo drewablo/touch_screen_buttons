@@ -3,8 +3,6 @@
 #include <TFTv2.h>
 #include <SPI.h>
 
-
-
 #define YP A2   // must be an analog pin, use "An" notation!
 #define XM A1   // must be an analog pin, use "An" notation!
 #define YM 14   // can be a digital pin, this is A0
@@ -21,8 +19,13 @@
 #define TS_MINY 83*2
 #define TS_MAXY 913*2
 
+#define Backlignt 7
+
 int buttonOneState; // setting variable for button 1 state
 int buttonTwoState; // setting variable for button 2 state
+
+long LastTouchMillis = 0; // variable to hold the last time the screen was touched
+long sleepInterval = (5 * 60 * 1000); // a five minute interval to be used in conjunction with screen sleep
 
 // For better pressure precision, we need to know the resistance
 // between X+ and X- Use any multimeter to read it
@@ -31,8 +34,9 @@ TouchScreen ts = TouchScreen(XP, YP, XM, YM);
 
 void setup(void) {
   Serial.begin(9600);
-  TFT_BL_ON;
   Tft.TFTinit(); //Start Screen
+  pinMode(Backlignt,OUTPUT); //
+  digitalWrite(Backlignt,HIGH); // turn on the backlight
   Tft.drawString("B1",50,5,2,WHITE); // button lable
   Tft.drawString("B2",170,5,2,WHITE); // button lable
   OffBox(20,25); //initial drawing of button
@@ -40,42 +44,44 @@ void setup(void) {
 }
 
 void loop(void) {
-  Point p = ts.getPoint();  // a point object holds x y and z coordinates
+  backLightState(); // screen sleep/wake function
+  
+  Point p = ts.getPoint();  // a point object holds x y (location) and z (pressure) coordinates
   p.x = map(p.x, TS_MINX, TS_MAXX, 0, 240); //x coordinate 
   p.y = map(p.y, TS_MINY, TS_MAXY, 0, 320); //y coordinate
 
-  // we have some minimum pressure we consider 'valid', so p.z needs to be more than 0
+  // we have some minimum pressure we consider 'valid', so p.z needs to be more than 0 to indicate a touch and resulting action
   if (p.z > 50) {
-      Serial.print("X = "); Serial.print(p.x);
-      Serial.print("\tY = "); Serial.print(p.y);
-      Serial.print("\tPressure = "); Serial.println(p.z);
-      Serial.println(buttonOneState);
-        if (25<=p.x && p.x<=105 && 20<=p.y && p.y<=100) {
-          if (buttonOneState == 1) {
-              OnBox(20,25);
-              Serial.println(buttonOneState);
-              buttonOneState = 0;
-              delay(100);
-            }
-          else { 
-             OffBox(20,25);
-             buttonOneState = 1;
-             delay(100);
-            }
-        }
-        else if (105<=p.x && p.x<=185 && 20<=p.y && p.y<=100) {
-           if (buttonTwoState == 1) {
-              OnBox(140,25);
-              Serial.println(buttonTwoState);
-              buttonTwoState = 0;
-              delay(100);
-            }
-          else { 
-             OffBox(140,25);
-             buttonTwoState = 1;
-             delay(100);
-        }
+    Serial.print("X = "); Serial.print(p.x);
+    Serial.print("\tY = "); Serial.print(p.y);
+    Serial.print("\tPressure = "); Serial.println(p.z);
+    Serial.println(buttonOneState);
+      if (25<=p.x && p.x<=105 && 20<=p.y && p.y<=100) {
+        if (buttonOneState == 1) {
+            OnBox(20,25);
+            Serial.println(buttonOneState);
+            buttonOneState = 0;
+            delay(100);
+          }
+        else { 
+           OffBox(20,25);
+           buttonOneState = 1;
+           delay(100);
+          }
       }
+      else if (105<=p.x && p.x<=185 && 20<=p.y && p.y<=100) {
+         if (buttonTwoState == 1) {
+            OnBox(140,25);
+            Serial.println(buttonTwoState);
+            buttonTwoState = 0;
+            delay(100);
+          }
+        else { 
+           OffBox(140,25);
+           buttonTwoState = 1;
+           delay(100);
+      }
+    }
   }
   delay(100);
 }
@@ -91,3 +97,15 @@ int OffBox(int px, int py){
   Tft.fillRectangle(px, py, 80, 80, GREEN);
   Tft.drawString("OFF", px+10, py+25, 3, WHITE);
 }  
+
+////////////////////////////Additional Functions/////////////////////////////////
+
+void backLightState() {
+  unsigned long currentMillis = millis();
+  if ((currentMillis - LastTouchMillis) > sleepInterval) && p.z <= 5) {
+    digitalWrite(Backlignt,LOW);  
+  }
+  else {
+    digitlaWrite(Backlight,HIGH);
+  }
+}
