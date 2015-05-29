@@ -19,7 +19,12 @@
 #define TS_MINY 83*2
 #define TS_MAXY 913*2
 
-#define Backlignt 7
+#define backLignt 7
+
+#define relayOne 8;
+#define relayTwo 9;
+#define relayThree 10;
+#define relayFour 11;
 
 int buttonOneState; // setting variable for button 1 state
 int buttonTwoState; // setting variable for button 2 state
@@ -35,8 +40,15 @@ TouchScreen ts = TouchScreen(XP, YP, XM, YM);
 void setup(void) {
   Serial.begin(9600);
   Tft.TFTinit(); //Start Screen
-  pinMode(Backlignt,OUTPUT); //
-  digitalWrite(Backlignt,HIGH); // turn on the backlight
+  digitalWrite(backLight,HIGH); // turn on the backlight
+  
+  pinMode(backLight,OUTPUT); //
+  
+  pinMode (relayOne, OUTPUT); 
+  pinMode (relayTwo, OUTPUT);
+  pinMode (relayThree, OUTPUT);
+  pinMode (relayFour, OUTPUT);
+  
   Tft.drawString("B1",50,5,2,WHITE); // button lable
   Tft.drawString("B2",170,5,2,WHITE); // button lable
   OffBox(20,25); //initial drawing of button
@@ -59,12 +71,14 @@ void loop(void) {
       if (25<=p.x && p.x<=105 && 20<=p.y && p.y<=100) {
         if (buttonOneState == 1) {
             OnBox(20,25);
+            digitalWrite(relayOne,0);
             Serial.println(buttonOneState);
             buttonOneState = 0;
             delay(100);
           }
         else { 
            OffBox(20,25);
+           digitalWrite(relayOne,1);
            buttonOneState = 1;
            delay(100);
           }
@@ -72,12 +86,14 @@ void loop(void) {
       else if (105<=p.x && p.x<=185 && 20<=p.y && p.y<=100) {
          if (buttonTwoState == 1) {
             OnBox(140,25);
+            digitalWrite(relayTwo,0);
             Serial.println(buttonTwoState);
             buttonTwoState = 0;
             delay(100);
           }
         else { 
            OffBox(140,25);
+           digitalWrite(relayTwo,1);
            buttonTwoState = 1;
            delay(100);
       }
@@ -103,9 +119,9 @@ int OffBox(int px, int py){
 void backLightState() {
   unsigned long currentMillis = millis();
   if ((currentMillis - LastTouchMillis) > sleepInterval) && p.z <= 5) {
-    digitalWrite(Backlignt,LOW);  
+    digitalWrite(backLight,LOW);  
   }
   else {
-    digitlaWrite(Backlight,HIGH);
+    digitlaWrite(backLight,HIGH);
   }
 }
