@@ -21,8 +21,8 @@
 #define TS_MINY 83*2
 #define TS_MAXY 913*2
 
-int buttonOneState;
-int buttonTwoState;
+int buttonOneState; // setting variable for button 1 state
+int buttonTwoState; // setting variable for button 2 state
 
 // For better pressure precision, we need to know the resistance
 // between X+ and X- Use any multimeter to read it
@@ -31,24 +31,20 @@ TouchScreen ts = TouchScreen(XP, YP, XM, YM);
 
 void setup(void) {
   Serial.begin(9600);
-  TFT_BL_OFF;
-  Tft.TFTinit();
-  Tft.drawString("B1",50,5,2,WHITE);
-  Tft.drawString("B2",170,5,2,WHITE);
-  OffBox(20,25);
-  OffBox(140,25);
+  TFT_BL_ON;
+  Tft.TFTinit(); //Start Screen
+  Tft.drawString("B1",50,5,2,WHITE); // button lable
+  Tft.drawString("B2",170,5,2,WHITE); // button lable
+  OffBox(20,25); //initial drawing of button
+  OffBox(140,25); //initial drawing of button
 }
 
 void loop(void) {
-  // a point object holds x y and z coordinates
+  Point p = ts.getPoint();  // a point object holds x y and z coordinates
+  p.x = map(p.x, TS_MINX, TS_MAXX, 0, 240); //x coordinate 
+  p.y = map(p.y, TS_MINY, TS_MAXY, 0, 320); //y coordinate
 
-  Point p = ts.getPoint();
-   
-  p.x = map(p.x, TS_MINX, TS_MAXX, 0, 240);
-  p.y = map(p.y, TS_MINY, TS_MAXY, 0, 320);
-
-  // we have some minimum pressure we consider 'valid'
-  // pressure of 0 means no pressing!
+  // we have some minimum pressure we consider 'valid', so p.z needs to be more than 0
   if (p.z > 50) {
       Serial.print("X = "); Serial.print(p.x);
       Serial.print("\tY = "); Serial.print(p.y);
@@ -81,9 +77,11 @@ void loop(void) {
         }
       }
   }
-  
   delay(100);
 }
+
+///////////////////////////////Box Helpers////////////////////////////
+
 int OnBox(int px, int py){
   Tft.fillRectangle(px, py, 80, 80, RED);
   Tft.drawString("ON",px+20,py+30,3,WHITE);
