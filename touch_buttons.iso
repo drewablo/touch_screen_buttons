@@ -2,7 +2,7 @@
 #include <SeeedTouchScreen.h> 
 #include <TFTv2.h>
 #include <SPI.h>
-#include <Adafruit_GFX.h>    // Core graphics library
+
 
 
 #define YP A2   // must be an analog pin, use "An" notation!
@@ -22,7 +22,7 @@
 #define TS_MAXY 913*2
 
 int buttonOneState;
-int lastButtonOneState;
+int buttonTwoState;
 
 // For better pressure precision, we need to know the resistance
 // between X+ and X- Use any multimeter to read it
@@ -34,13 +34,14 @@ void setup(void) {
   TFT_BL_OFF;
   Tft.TFTinit();
   Tft.drawString("B1",50,5,2,WHITE);
-  Tft.fillRectangle(20, 25, 80,80, GREEN);
-  Tft.drawString("OFF",30,50,3,WHITE);
+  Tft.drawString("B2",170,5,2,WHITE);
+  OffBox(20,25);
+  OffBox(140,25);
 }
 
 void loop(void) {
   // a point object holds x y and z coordinates
-;
+
   Point p = ts.getPoint();
    
   p.x = map(p.x, TS_MINX, TS_MAXX, 0, 240);
@@ -48,30 +49,47 @@ void loop(void) {
 
   // we have some minimum pressure we consider 'valid'
   // pressure of 0 means no pressing!
-  if (p.z > 200) {
-
+  if (p.z > 50) {
       Serial.print("X = "); Serial.print(p.x);
       Serial.print("\tY = "); Serial.print(p.y);
       Serial.print("\tPressure = "); Serial.println(p.z);
       Serial.println(buttonOneState);
         if (25<=p.x && p.x<=105 && 20<=p.y && p.y<=100) {
-        if (buttonOneState == 1) {
-            Tft.fillRectangle(20, 25, 80, 80, RED);
-            Tft.drawString("ON",40,50,3,WHITE);
-            Serial.println(buttonOneState);
-            buttonOneState = 0;
-            delay(100);
-          }
-        else { 
-           Tft.fillRectangle(20, 25, 80,80, GREEN);
-           Tft.drawString("OFF",30,50,3,WHITE);
-           buttonOneState = 1;
-           delay(100);
-
-          }
+          if (buttonOneState == 1) {
+              OnBox(20,25);
+              Serial.println(buttonOneState);
+              buttonOneState = 0;
+              delay(100);
+            }
+          else { 
+             OffBox(20,25);
+             buttonOneState = 1;
+             delay(100);
+            }
         }
-
+        else if (105<=p.x && p.x<=185 && 20<=p.y && p.y<=100) {
+           if (buttonTwoState == 1) {
+              OnBox(140,25);
+              Serial.println(buttonTwoState);
+              buttonTwoState = 0;
+              delay(100);
+            }
+          else { 
+             OffBox(140,25);
+             buttonTwoState = 1;
+             delay(100);
+        }
       }
+  }
   
   delay(100);
 }
+int OnBox(int px, int py){
+  Tft.fillRectangle(px, py, 80, 80, RED);
+  Tft.drawString("ON",px+20,py+30,3,WHITE);
+}
+
+int OffBox(int px, int py){
+  Tft.fillRectangle(px, py, 80, 80, GREEN);
+  Tft.drawString("OFF", px+10, py+25, 3, WHITE);
+}  
