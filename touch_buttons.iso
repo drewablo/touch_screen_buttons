@@ -19,15 +19,15 @@
 #define TS_MINY 83*2
 #define TS_MAXY 913*2
 
-#define backLignt 7
+#define backLight 7
 
-#define relayOne 8;
-#define relayTwo 9;
-#define relayThree 10;
-#define relayFour 11;
+#define relayOne 8
+#define relayTwo 9
+#define relayThree 10
+#define relayFour 11
 
-int buttonOneState; // setting variable for button 1 state
-int buttonTwoState; // setting variable for button 2 state
+int buttonOneState = 1; // setting variable for button 1 state
+int buttonTwoState = 1; // setting variable for button 2 state
 
 long LastTouchMillis = 0; // variable to hold the last time the screen was touched
 long sleepInterval = (5 * 60 * 1000); // a five minute interval to be used in conjunction with screen sleep
@@ -105,23 +105,30 @@ void loop(void) {
 ///////////////////////////////Box Helpers////////////////////////////
 
 int OnBox(int px, int py){
-  Tft.fillRectangle(px, py, 80, 80, RED);
+  Tft.fillRectangle(px,py,84,84,BLACK);
+  Tft.fillRectangle(px+4, py+4, 80, 80, RED);
+  Tft.drawRectangle(px,py,83,83, GRAY2);
+  Tft.drawRectangle(px,py,84,84, GRAY2);
   Tft.drawString("ON",px+20,py+30,3,WHITE);
 }
 
 int OffBox(int px, int py){
+  Tft.fillRectangle(px,py,84,84,BLACK);
   Tft.fillRectangle(px, py, 80, 80, GREEN);
+  Tft.drawRectangle(px,py,83,83, WHITE);
+  Tft.drawRectangle(px,py,84,84, WHITE);
   Tft.drawString("OFF", px+10, py+25, 3, WHITE);
 }  
 
 ////////////////////////////Additional Functions/////////////////////////////////
 
 void backLightState() {
+  Point p = ts.getPoint(); 
   unsigned long currentMillis = millis();
-  if ((currentMillis - LastTouchMillis) > sleepInterval) && p.z <= 5) {
+  if ((currentMillis - LastTouchMillis) > sleepInterval && p.z <= 5) {
     digitalWrite(backLight,LOW);  
   }
   else {
-    digitlaWrite(backLight,HIGH);
+    digitalWrite(backLight,HIGH);
   }
 }
