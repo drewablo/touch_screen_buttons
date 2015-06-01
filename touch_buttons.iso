@@ -33,7 +33,7 @@ int buttonFourState = 1;
 int buttonFiveState = 1;
 
 long LastTouchMillis = 0; // variable to hold the last time the screen was touched
-long sleepInterval = (5*60*1000); // a five minute interval to be used in conjunction with screen sleep
+long sleepInterval = (300000); // a five minute interval to be used in conjunction with screen sleep
 
 // For better pressure precision, we need to know the resistance
 // between X+ and X- Use any multimeter to read it
