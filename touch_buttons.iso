@@ -26,8 +26,8 @@
 #define relayThree 10
 #define relayFour 11
 
-int buttonOneState = 1; // setting variable for button 1 state
-int buttonTwoState = 1; // setting variable for button 2 state
+int buttonOneState = 1;
+int buttonTwoState = 1; 
 int buttonThreeState = 1;
 int buttonFourState = 1;
 int buttonFiveState = 1;
@@ -65,82 +65,79 @@ void setup(void) {
 
 void loop(void) {
   backLightState(); // screen sleep/wake function
-  
+
   Point p = ts.getPoint();  // a point object holds x y (location) and z (pressure) coordinates
   p.x = map(p.x, TS_MINX, TS_MAXX, 0, 240); //x coordinate 
   p.y = map(p.y, TS_MINY, TS_MAXY, 0, 320); //y coordinate
 
-  // we have some minimum pressure we consider 'valid', so p.z needs to be more than 0 to indicate a touch and resulting action
-  if (p.z > 50) {
+// we have some minimum pressure we consider 'valid', so p.z needs to be more than 0 to indicate a touch and resulting action
+  if (p.z > 50 && backLight == HIGH) {
     Serial.print("X = "); Serial.print(p.x);
     Serial.print("\tY = "); Serial.print(p.y);
     Serial.print("\tPressure = "); Serial.println(p.z);
     Serial.println(buttonOneState);
-      /////////BUTTON 1////////////
+/////////BUTTON 1////////////
       if (25<=p.x && p.x<=105 && 20<=p.y && p.y<=100) {
-        if (buttonOneState == 1) {
+        if (relayOne == LOW) {
             OnBox(20,25);
-            digitalWrite(relayOne,0);
-            Serial.println(buttonOneState);
-            buttonOneState = 0;
-            delay(500);
+            digitalWrite(relayOne,HIGH);
+            Serial.println("Button 1 ON");
+            delay(100);
           }
         else { 
            OffBox(20,25);
-           digitalWrite(relayOne,1);
-           buttonOneState = 1;
+           digitalWrite(relayOne,LOW);
+		   Serial.println("Button 1 OFF");
            delay(100);
           }
       }
-      ////////////BUTTON 2///////////////
+////////////BUTTON 2///////////////
       else if (140<=p.x && p.x<=220 && 20<=p.y && p.y<=100) {
-         if (buttonTwoState == 1) {
+         if (relayTwo == LOW) {
             OnBox(140,25);
-            digitalWrite(relayTwo,0);
-            Serial.println(buttonTwoState);
-            buttonTwoState = 0;
+            digitalWrite(relayTwo,HIGH);
+            Serial.println("Button 2 ON");
             delay(100);
           }
         else { 
            OffBox(140,25);
-           digitalWrite(relayTwo,1);
-           buttonTwoState = 1;
+           digitalWrite(relayTwo,LOW);
+		   Serial.println("Button 2 OFF");
            delay(500);
         }
       }
-      /////////////BUTTON 3///////////
+/////////////BUTTON 3///////////
       else if (20<=p.x && p.x<=100 && 130<=p.y && p.y<=210) {
-        if (buttonThreeState == 1) {
+        if (relayThree == LOW) {
             OnBox(20,130);
-            digitalWrite(relayOne,0);
-            Serial.println(buttonOneState);
-            buttonThreeState = 0;
+            digitalWrite(relayThree,HIGH);
+            Serial.println("Button 3 ON");			
             delay(100);
           }
         else { 
            OffBox(20,130);
-           digitalWrite(relayOne,1);
-           buttonThreeState = 1;
+           digitalWrite(relayThree,LOW);
+           Serial.println("Button 3 OFF");
            delay(100);
           }
       }
-      //////////BUTTON 4//////////
+//////////BUTTON 4//////////
       else if (140<=p.x && p.x<=220 && 130<=p.y && p.y<=210) {
-         if (buttonFourState == 1) {
+         if (relayFour == LOW) {
             OnBox(140,130);
-            digitalWrite(relayTwo,0);
-            Serial.println(buttonTwoState);
+            digitalWrite(relayFour, HIGH);
+            Serial.println("Button 4 ON");	
             buttonFourState = 0;
             delay(100);
           }
         else { 
            OffBox(140,130);
-           digitalWrite(relayTwo,1);
-           buttonFourState = 1;
+           digitalWrite(relayFour, LOW);
+           Serial.println("Button 4 OFF");	
            delay(100);
       }
     }
-    //////////MASTER ON OFF SWITCH/////////////
+//////////MASTER ON OFF SWITCH/////////////
         else if (80 <=p.x && p.x <= 160 && 230 <p.y && p.y <=310){
           if (buttonFiveState == 1) {
              OnBox(80,230);
@@ -148,11 +145,10 @@ void loop(void) {
              OnBox(140,25); 
              OnBox(20,130);
              OnBox(140,130);
-             buttonOneState = 0;
-             buttonTwoState = 0;
-             buttonThreeState = 0;
-             buttonFourState = 0;
-             buttonFiveState = 0;
+			 digitalWrite(relayOne,HIGH);
+			 digitalWrite(relayTWO,HIGH);
+			 digitalWrite(relayThree,HIGH);
+			 digitalWrite(relayFour,HIGH);
           }
           else {
              OffBox(80,230);
@@ -160,14 +156,17 @@ void loop(void) {
              OffBox(140,25); 
              OffBox(20,130);
              OffBox(140,130);
-             buttonOneState = 1;
-             buttonTwoState = 1;
-             buttonThreeState = 1;
-             buttonFourState = 1;
-             buttonFiveState = 1;
+			 digitalWrite(relayOne,LOW);
+			 digitalWrite(relayTWO,LOW);
+			 digitalWrite(relayThree,LOW);
+			 digitalWrite(relayFour,LOW);
         }
      }
   }
+  else if (p.z > 50 && backLight == LOW) {
+	digitalWrite(backLight,HIGH);
+	delay(100);
+	}
   delay(100);
 }
 
