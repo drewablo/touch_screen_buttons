@@ -80,13 +80,13 @@ void loop(void) {
             digitalWrite(relayOne,0);
             Serial.println(buttonOneState);
             buttonOneState = 0;
-            delay(100);
+            delay(500);
           }
         else { 
            OffBox(20,25);
            digitalWrite(relayOne,1);
            buttonOneState = 1;
-           delay(100);
+           delay(500);
           }
       }
       else if (140<=p.x && p.x<=220 && 20<=p.y && p.y<=100) {
@@ -95,43 +95,43 @@ void loop(void) {
             digitalWrite(relayTwo,0);
             Serial.println(buttonTwoState);
             buttonTwoState = 0;
-            delay(100);
+            delay(500);
           }
         else { 
            OffBox(140,25);
            digitalWrite(relayTwo,1);
            buttonTwoState = 1;
-           delay(100);
+           delay(500);
       }
       }
       else if (20<=p.x && p.x<=100 && 140<=p.y && p.y<=220) {
-        if (buttonOneState == 1) {
+        if (buttonThreeState == 1) {
             OnBox(20,140);
             digitalWrite(relayOne,0);
             Serial.println(buttonOneState);
-            buttonOneState = 0;
-            delay(100);
+            buttonThreeState = 0;
+            delay(500);
           }
         else { 
            OffBox(20,140);
            digitalWrite(relayOne,1);
-           buttonOneState = 1;
-           delay(100);
+           buttonThreeState = 1;
+           delay(500);
           }
       }
       else if (140<=p.x && p.x<=220 && 140<=p.y && p.y<=220) {
-         if (buttonTwoState == 1) {
+         if (buttonFourState == 1) {
             OnBox(140,140);
             digitalWrite(relayTwo,0);
             Serial.println(buttonTwoState);
-            buttonTwoState = 0;
-            delay(100);
+            buttonFourState = 0;
+            delay(500);
           }
         else { 
            OffBox(140,140);
            digitalWrite(relayTwo,1);
-           buttonTwoState = 1;
-           delay(100);
+           buttonFourState = 1;
+           delay(500);
       }
     }
   }
