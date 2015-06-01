@@ -28,9 +28,11 @@
 
 int buttonOneState = 1; // setting variable for button 1 state
 int buttonTwoState = 1; // setting variable for button 2 state
+int buttonThreeState = 1;
+int buttonFourState = 1;
 
 long LastTouchMillis = 0; // variable to hold the last time the screen was touched
-long sleepInterval = (5 * 60 * 1000); // a five minute interval to be used in conjunction with screen sleep
+long sleepInterval = (5*60*1000); // a five minute interval to be used in conjunction with screen sleep
 
 // For better pressure precision, we need to know the resistance
 // between X+ and X- Use any multimeter to read it
@@ -51,8 +53,12 @@ void setup(void) {
   
   Tft.drawString("B1",50,5,2,WHITE); // button lable
   Tft.drawString("B2",170,5,2,WHITE); // button lable
+  Tft.drawString("B3",50,120,2,WHITE);
+  Tft.drawString("B4",170,120,2,WHITE);
   OffBox(20,25); //initial drawing of button
   OffBox(140,25); //initial drawing of button
+  OffBox(20,140);
+  OffBox(140,140);
 }
 
 void loop(void) {
@@ -83,7 +89,7 @@ void loop(void) {
            delay(100);
           }
       }
-      else if (105<=p.x && p.x<=185 && 20<=p.y && p.y<=100) {
+      else if (140<=p.x && p.x<=220 && 20<=p.y && p.y<=100) {
          if (buttonTwoState == 1) {
             OnBox(140,25);
             digitalWrite(relayTwo,0);
@@ -93,6 +99,36 @@ void loop(void) {
           }
         else { 
            OffBox(140,25);
+           digitalWrite(relayTwo,1);
+           buttonTwoState = 1;
+           delay(100);
+      }
+      }
+      else if (20<=p.x && p.x<=100 && 140<=p.y && p.y<=220) {
+        if (buttonOneState == 1) {
+            OnBox(20,140);
+            digitalWrite(relayOne,0);
+            Serial.println(buttonOneState);
+            buttonOneState = 0;
+            delay(100);
+          }
+        else { 
+           OffBox(20,140);
+           digitalWrite(relayOne,1);
+           buttonOneState = 1;
+           delay(100);
+          }
+      }
+      else if (140<=p.x && p.x<=220 && 140<=p.y && p.y<=220) {
+         if (buttonTwoState == 1) {
+            OnBox(140,140);
+            digitalWrite(relayTwo,0);
+            Serial.println(buttonTwoState);
+            buttonTwoState = 0;
+            delay(100);
+          }
+        else { 
+           OffBox(140,140);
            digitalWrite(relayTwo,1);
            buttonTwoState = 1;
            delay(100);
@@ -107,8 +143,8 @@ void loop(void) {
 int OnBox(int px, int py){
   Tft.fillRectangle(px,py,84,84,BLACK);
   Tft.fillRectangle(px+4, py+4, 80, 80, RED);
-  Tft.drawRectangle(px,py,83,83, GRAY2);
-  Tft.drawRectangle(px,py,84,84, GRAY2);
+  Tft.drawRectangle(px,py,83,83, WHITE);
+  Tft.drawRectangle(px,py,84,84, WHITE);
   Tft.drawString("ON",px+20,py+30,3,WHITE);
 }
 
@@ -125,7 +161,10 @@ int OffBox(int px, int py){
 void backLightState() {
   Point p = ts.getPoint(); 
   unsigned long currentMillis = millis();
-  if ((currentMillis - LastTouchMillis) > sleepInterval && p.z <= 5) {
+  if (p.z >=5) {
+    LastTouchMillis = millis();
+  }
+  else if ((currentMillis - LastTouchMillis) > sleepInterval && p.z <= 5) {
     digitalWrite(backLight,LOW);  
   }
   else {
