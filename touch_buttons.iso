@@ -26,11 +26,13 @@
 #define relayThree 10
 #define relayFour 11
 
-int buttonOneState = 1;
-int buttonTwoState = 1; 
-int buttonThreeState = 1;
-int buttonFourState = 1;
-int buttonFiveState = 1;
+int buttonOneState = 0;
+int buttonTwoState = 0; 
+int buttonThreeState = 0;
+int buttonFourState = 0;
+int buttonFiveState = 0;
+
+int backLightState = 0;
 
 long LastTouchMillis = 0; // variable to hold the last time the screen was touched
 long sleepInterval = (300000); // a five minute interval to be used in conjunction with screen sleep
@@ -61,9 +63,25 @@ void setup(void) {
   OffBox(20,130);
   OffBox(140,130);
   OffBox(80,230);
+  
+  buttonOneState = digitalRead(relayOne);
+  buttonTwoState = digitalRead(relayTwo);
+  buttonThreeState = digitalRead(relayThree);
+  buttonFourState = digitalRead(relayFour);
+  
+  Serial.println(buttonOneState);
+  Serail.println(buttonTwoState);
+  Serial.println(buttonThreeState);
+  Serial.println(buttonFourState); 
 }
 
 void loop(void) {
+ 
+  buttonOneState = digitalRead(relayOne);
+  buttonTwoState = digitalRead(relayTwo);
+  buttonThreeState = digitalRead(relayThree);
+  buttonFourState = digitalRead(relayFour);
+
   backLightState(); // screen sleep/wake function
 
   Point p = ts.getPoint();  // a point object holds x y (location) and z (pressure) coordinates
@@ -71,14 +89,15 @@ void loop(void) {
   p.y = map(p.y, TS_MINY, TS_MAXY, 0, 320); //y coordinate
 
 // we have some minimum pressure we consider 'valid', so p.z needs to be more than 0 to indicate a touch and resulting action
-  if (p.z > 50 && backLight == HIGH) {
+  if (p.z > 50 && backLightState = 1) {
     Serial.print("X = "); Serial.print(p.x);
     Serial.print("\tY = "); Serial.print(p.y);
     Serial.print("\tPressure = "); Serial.println(p.z);
     Serial.println(buttonOneState);
+    
 /////////BUTTON 1////////////
       if (25<=p.x && p.x<=105 && 20<=p.y && p.y<=100) {
-        if (relayOne == LOW) {
+        if (buttonStateOne == 1) {
             OnBox(20,25);
             digitalWrite(relayOne,HIGH);
             Serial.println("Button 1 ON");
@@ -87,13 +106,13 @@ void loop(void) {
         else { 
            OffBox(20,25);
            digitalWrite(relayOne,LOW);
-		   Serial.println("Button 1 OFF");
+	   Serial.println("Button 1 OFF");
            delay(100);
           }
       }
 ////////////BUTTON 2///////////////
       else if (140<=p.x && p.x<=220 && 20<=p.y && p.y<=100) {
-         if (relayTwo == LOW) {
+         if (buttonStateTwo == 1) {
             OnBox(140,25);
             digitalWrite(relayTwo,HIGH);
             Serial.println("Button 2 ON");
@@ -108,7 +127,7 @@ void loop(void) {
       }
 /////////////BUTTON 3///////////
       else if (20<=p.x && p.x<=100 && 130<=p.y && p.y<=210) {
-        if (relayThree == LOW) {
+        if (buttonThreeState == 1) {
             OnBox(20,130);
             digitalWrite(relayThree,HIGH);
             Serial.println("Button 3 ON");			
@@ -123,7 +142,7 @@ void loop(void) {
       }
 //////////BUTTON 4//////////
       else if (140<=p.x && p.x<=220 && 130<=p.y && p.y<=210) {
-         if (relayFour == LOW) {
+         if (buttonFourState == 1) {
             OnBox(140,130);
             digitalWrite(relayFour, HIGH);
             Serial.println("Button 4 ON");	
@@ -191,15 +210,20 @@ int OffBox(int px, int py){
 ////////////////////////////Additional Functions/////////////////////////////////
 
 void backLightState() {
+  backLightState = digitalRead(backLight);
   Point p = ts.getPoint(); 
   unsigned long currentMillis = millis();
   if (p.z >=5) {
     LastTouchMillis = millis();
+    backLightState = digitalRead(backLight);
+    
   }
   else if ((currentMillis - LastTouchMillis) > sleepInterval && p.z <= 5) {
     digitalWrite(backLight,LOW);  
+    backLightState = digitalRead(backLight);
   }
   else {
     digitalWrite(backLight,HIGH);
+    backLightState = digitalRead(backLight);
   }
 }
