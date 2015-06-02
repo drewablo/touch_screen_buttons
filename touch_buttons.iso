@@ -52,6 +52,7 @@ void setup(void) {
   pinMode (relayThree, OUTPUT);
   pinMode (relayFour, OUTPUT);
   
+  
   Tft.drawString("B1",50,10,2,WHITE); // button lable
   Tft.drawString("B2",170,10,2,WHITE); // button lable
   Tft.drawString("B3",50,115,2,WHITE);
@@ -61,6 +62,11 @@ void setup(void) {
   OffBox(20,130);
   OffBox(140,130);
   OffBox(80,230);
+  
+   digitalWrite(relayOne,HIGH);
+   digitalWrite(relayTwo,HIGH);
+   digitalWrite(relayThree,HIGH);
+   digitalWrite(relayFour,HIGH);  
 }
 
 void loop(void) {
@@ -80,14 +86,14 @@ void loop(void) {
       if (25<=p.x && p.x<=105 && 20<=p.y && p.y<=100) {
         if (buttonOneState == 1) {
             OnBox(20,25);
-            digitalWrite(relayOne,0);
+            digitalWrite(relayOne,LOW);
             Serial.println(buttonOneState);
             buttonOneState = 0;
             delay(500);
           }
         else { 
            OffBox(20,25);
-           digitalWrite(relayOne,1);
+           digitalWrite(relayOne,HIGH);
            buttonOneState = 1;
            delay(100);
           }
@@ -96,14 +102,14 @@ void loop(void) {
       else if (140<=p.x && p.x<=220 && 20<=p.y && p.y<=100) {
          if (buttonTwoState == 1) {
             OnBox(140,25);
-            digitalWrite(relayTwo,0);
+            digitalWrite(relayTwo,LOW);
             Serial.println(buttonTwoState);
             buttonTwoState = 0;
             delay(100);
           }
         else { 
            OffBox(140,25);
-           digitalWrite(relayTwo,1);
+           digitalWrite(relayTwo,HIGH);
            buttonTwoState = 1;
            delay(500);
         }
@@ -112,14 +118,14 @@ void loop(void) {
       else if (20<=p.x && p.x<=100 && 130<=p.y && p.y<=210) {
         if (buttonThreeState == 1) {
             OnBox(20,130);
-            digitalWrite(relayOne,0);
+            digitalWrite(relayThree,LOW);
             Serial.println(buttonOneState);
             buttonThreeState = 0;
             delay(100);
           }
         else { 
            OffBox(20,130);
-           digitalWrite(relayOne,1);
+           digitalWrite(relayThree,HIGH);
            buttonThreeState = 1;
            delay(100);
           }
@@ -128,14 +134,14 @@ void loop(void) {
       else if (140<=p.x && p.x<=220 && 130<=p.y && p.y<=210) {
          if (buttonFourState == 1) {
             OnBox(140,130);
-            digitalWrite(relayTwo,0);
+            digitalWrite(relayFour,LOW);
             Serial.println(buttonTwoState);
             buttonFourState = 0;
             delay(100);
           }
         else { 
            OffBox(140,130);
-           digitalWrite(relayTwo,1);
+           digitalWrite(relayFour,HIGH);
            buttonFourState = 1;
            delay(100);
       }
@@ -153,6 +159,10 @@ void loop(void) {
              buttonThreeState = 0;
              buttonFourState = 0;
              buttonFiveState = 0;
+             digitalWrite(relayOne,LOW);
+             digitalWrite(relayTwo,LOW);
+             digitalWrite(relayThree,LOW);
+             digitalWrite(relayFour,LOW);
           }
           else {
              OffBox(80,230);
@@ -165,6 +175,10 @@ void loop(void) {
              buttonThreeState = 1;
              buttonFourState = 1;
              buttonFiveState = 1;
+             digitalWrite(relayOne,HIGH);
+             digitalWrite(relayTwo,HIGH);
+             digitalWrite(relayThree,HIGH);
+             digitalWrite(relayFour,HIGH);             
         }
      }
   }
@@ -189,7 +203,7 @@ int OffBox(int px, int py){
   Tft.drawString("OFF", px+10, py+25, 3, WHITE);
 }  
 
-///////////////////////////Additional Functions/////////////////////////////////
+////////////////////////////Additional Functions/////////////////////////////////
 
 void backLightState() {
   Point p = ts.getPoint(); 
