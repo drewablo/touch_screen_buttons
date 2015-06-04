@@ -1,0 +1,35 @@
+int x = 0;
+int y = 0;
+int xArray[239];
+int yArray[319];
+
+
+// the setup routine runs once when you press reset:
+void setup() {                
+  for (x;x<240;x++) {
+	xArray[x] = x;
+  }
+  for (y;y<320;y++) {
+	yArray[y]=y;
+  }  
+}
+
+// the loop routine runs over and over again forever:
+void loop() {
+for (int v=1;v<5000;v++){
+	pixFunc(xArray[v],yArray[v]);
+	for(int vN=v;vN==v;vN++) {
+		pixFunc(xArray[v+vN],yArray[vN]);
+		pixFunc(xArray[vN],yArray[vN+1]);
+		pixFunc(xArray[vN+1],yArray[vN+1]);
+		pixFunc(xArray[0],yArray[vN]);
+		pixFunc(xArray[vN],yArray[0]);
+	}
+
+}
+  delay(1000);               // wait for a second
+}
+
+int pixFunc(int pX, int pY) {
+	Tft.setPixel(pX,pY,RED);
+}
