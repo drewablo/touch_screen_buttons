@@ -24,13 +24,10 @@
 #define relayOne 8
 #define relayTwo 9
 #define relayThree 10
-#define relayFour 11
+#define relayFour 12
 
-int buttonOneState = 1; // setting variable for button 1 state
-int buttonTwoState = 1; // setting variable for button 2 state
-int buttonThreeState = 1;
-int buttonFourState = 1;
 int buttonFiveState = 1;
+
 
 long LastTouchMillis = 0; // variable to hold the last time the screen was touched
 long sleepInterval = (300000); // a five minute interval to be used in conjunction with screen sleep
@@ -52,6 +49,10 @@ void setup(void) {
   pinMode (relayThree, OUTPUT);
   pinMode (relayFour, OUTPUT);
   
+  digitalWrite(relayOne, LOW);
+  digitalWrite(relayTwo, LOW);
+  digitalWrite(relayThree, LOW);
+  digitalWrite(relayFour, LOW);  
   
   Tft.drawString("B1",50,10,2,WHITE); // button lable
   Tft.drawString("B2",170,10,2,WHITE); // button lable
@@ -62,91 +63,83 @@ void setup(void) {
   OffBox(20,130);
   OffBox(140,130);
   OffBox(80,230);
-  
-   digitalWrite(relayOne,HIGH);
-   digitalWrite(relayTwo,HIGH);
-   digitalWrite(relayThree,HIGH);
-   digitalWrite(relayFour,HIGH);  
 }
 
-void loop(void) {
+void loop(void) { 
   backLightState(); // screen sleep/wake function
-  
+
   Point p = ts.getPoint();  // a point object holds x y (location) and z (pressure) coordinates
   p.x = map(p.x, TS_MINX, TS_MAXX, 0, 240); //x coordinate 
   p.y = map(p.y, TS_MINY, TS_MAXY, 0, 320); //y coordinate
 
-  // we have some minimum pressure we consider 'valid', so p.z needs to be more than 0 to indicate a touch and resulting action
-  if (p.z > 50) {
+// we have some minimum pressure we consider 'valid', so p.z needs to be more than 0 to indicate a touch and resulting action
+  if (p.z > 50 && digitalRead(backLight) == HIGH) {
     Serial.print("X = "); Serial.print(p.x);
     Serial.print("\tY = "); Serial.print(p.y);
     Serial.print("\tPressure = "); Serial.println(p.z);
-    Serial.println(buttonOneState);
-      /////////BUTTON 1////////////
+
+    
+/////////BUTTON 1////////////
       if (25<=p.x && p.x<=105 && 20<=p.y && p.y<=100) {
-        if (buttonOneState == 1) {
+        if (digitalRead(relayOne) == LOW) {
             OnBox(20,25);
-            digitalWrite(relayOne,LOW);
-            Serial.println(buttonOneState);
-            buttonOneState = 0;
-            delay(500);
+            digitalWrite(relayOne,HIGH);
+            Serial.println("Button 1 ON");
+            delay(100);
           }
         else { 
            OffBox(20,25);
-           digitalWrite(relayOne,HIGH);
-           buttonOneState = 1;
+           digitalWrite(relayOne,LOW);
+	   Serial.println("Button 1 OFF");
            delay(100);
           }
       }
-      ////////////BUTTON 2///////////////
+////////////BUTTON 2///////////////
       else if (140<=p.x && p.x<=220 && 20<=p.y && p.y<=100) {
-         if (buttonTwoState == 1) {
+         if (digitalRead(relayTwo) == LOW) {
             OnBox(140,25);
-            digitalWrite(relayTwo,LOW);
-            Serial.println(buttonTwoState);
-            buttonTwoState = 0;
+            digitalWrite(relayTwo,HIGH);
+            Serial.println("Button 2 ON");
             delay(100);
           }
         else { 
            OffBox(140,25);
-           digitalWrite(relayTwo,HIGH);
-           buttonTwoState = 1;
+           digitalWrite(relayTwo,LOW);
+		   Serial.println("Button 2 OFF");
            delay(500);
         }
       }
-      /////////////BUTTON 3///////////
+/////////////BUTTON 3///////////
       else if (20<=p.x && p.x<=100 && 130<=p.y && p.y<=210) {
-        if (buttonThreeState == 1) {
+        if (digitalRead(relayThree) == LOW) {
             OnBox(20,130);
-            digitalWrite(relayThree,LOW);
-            Serial.println(buttonOneState);
-            buttonThreeState = 0;
+            digitalWrite(relayThree,HIGH);
+            Serial.println("Button 3 ON");			
             delay(100);
           }
         else { 
            OffBox(20,130);
-           digitalWrite(relayThree,HIGH);
-           buttonThreeState = 1;
+           digitalWrite(relayThree,LOW);
+           Serial.println("Button 3 OFF");
            delay(100);
           }
       }
-      //////////BUTTON 4//////////
+//////////BUTTON 4//////////
       else if (140<=p.x && p.x<=220 && 130<=p.y && p.y<=210) {
-         if (buttonFourState == 1) {
+        if (digitalRead(relayFour) == LOW) {
             OnBox(140,130);
-            digitalWrite(relayFour,LOW);
-            Serial.println(buttonTwoState);
-            buttonFourState = 0;
+            digitalWrite(relayFour,HIGH);
+            Serial.println("Button 4 ON");			
             delay(100);
           }
         else { 
            OffBox(140,130);
-           digitalWrite(relayFour,HIGH);
-           buttonFourState = 1;
+           digitalWrite(relayFour,LOW);
+           Serial.println("Button 4 OFF");
            delay(100);
+          }
       }
-    }
-    //////////MASTER ON OFF SWITCH/////////////
+//////////MASTER ON OFF SWITCH/////////////
         else if (80 <=p.x && p.x <= 160 && 230 <p.y && p.y <=310){
           if (buttonFiveState == 1) {
              OnBox(80,230);
@@ -154,15 +147,11 @@ void loop(void) {
              OnBox(140,25); 
              OnBox(20,130);
              OnBox(140,130);
-             buttonOneState = 0;
-             buttonTwoState = 0;
-             buttonThreeState = 0;
-             buttonFourState = 0;
+	     digitalWrite(relayOne,HIGH);
+	     digitalWrite(relayTwo,HIGH);
+	     digitalWrite(relayThree,HIGH);
+	     digitalWrite(relayFour,HIGH);
              buttonFiveState = 0;
-             digitalWrite(relayOne,LOW);
-             digitalWrite(relayTwo,LOW);
-             digitalWrite(relayThree,LOW);
-             digitalWrite(relayFour,LOW);
           }
           else {
              OffBox(80,230);
@@ -170,18 +159,18 @@ void loop(void) {
              OffBox(140,25); 
              OffBox(20,130);
              OffBox(140,130);
-             buttonOneState = 1;
-             buttonTwoState = 1;
-             buttonThreeState = 1;
-             buttonFourState = 1;
+	     digitalWrite(relayOne,LOW);
+	     digitalWrite(relayTwo,LOW);
+             digitalWrite(relayThree,LOW);
+             digitalWrite(relayFour,LOW);
              buttonFiveState = 1;
-             digitalWrite(relayOne,HIGH);
-             digitalWrite(relayTwo,HIGH);
-             digitalWrite(relayThree,HIGH);
-             digitalWrite(relayFour,HIGH);             
         }
      }
   }
+  else if (p.z > 50 && backLight == LOW) {
+	digitalWrite(backLight,HIGH);
+	delay(100);
+	}
   delay(100);
 }
 
@@ -210,6 +199,7 @@ void backLightState() {
   unsigned long currentMillis = millis();
   if (p.z >=5) {
     LastTouchMillis = millis();
+    
   }
   else if ((currentMillis - LastTouchMillis) > sleepInterval && p.z <= 5) {
     digitalWrite(backLight,LOW);  
